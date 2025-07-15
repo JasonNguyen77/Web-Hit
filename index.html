@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tool Dự Đoán HitClub</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      color: #00ff00;
+      font-family: monospace;
+      overflow: hidden;
+    }
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+      padding: 30px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 32px;
+      text-shadow: 0 0 10px #00ff00;
+      margin-bottom: 40px;
+    }
+    .box {
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #00ff00;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 30px;
+      box-shadow: 0 0 10px #00ff00;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+    }
+    input[type=text] {
+      width: 100%;
+      padding: 10px;
+      background: black;
+      color: #00ff00;
+      border: 1px solid #00ff00;
+      margin-top: 5px;
+      border-radius: 5px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      background: #000;
+      color: #00ff00;
+      border: 2px solid #00ff00;
+      font-size: 18px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 25px;
+      padding: 20px;
+      background: #111;
+      border: 2px solid #00ff00;
+      border-radius: 10px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+<canvas id="matrix"></canvas>
+<div class="container">
+  <h1>💻 Dự Đoán Cầu HitClub 💻</h1>
+  <div class="box">
+    <label>4 phiên trước Hit Nổ Hũ:</label>
+    <input type="text" id="nohuInput" placeholder="VD: 11 10 9 8">
+    <label>4 phiên trước Hit MD5:</label>
+    <input type="text" id="md5Input" placeholder="VD: 11 10 9 8">
+    <button onclick="duDoan()">🔮 Dự đoán kết quả</button>
+  </div>
+  <div class="result" id="output"></div>
+</div>
+
+<script>
+  // MATRIX RAIN EFFECT
+  const canvas = document.getElementById('matrix');
+  const ctx = canvas.getContext('2d');
+  canvas.height = window.innerHeight;
+  canvas.width = window.innerWidth;
+
+  const letters = "アァイィウエカキクケコサシスセソタチツテトナニハヒフヘホマミムメモヤユヨラリルレロワンabcdefghijklmnopqrstuvwxyz0123456789";
+  const matrix = letters.split("");
+  const font_size = 14;
+  const columns = canvas.width / font_size;
+  const drops = [];
+
+  for (let x = 0; x < columns; x++) drops[x] = 1;
+
+  function drawMatrix() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#0F0";
+    ctx.font = font_size + "px monospace";
+    for (let i = 0; i < drops.length; i++) {
+      const text = matrix[Math.floor(Math.random() * matrix.length)];
+      ctx.fillText(text, i * font_size, drops[i] * font_size);
+      if (drops[i] * font_size > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
+      }
+      drops[i]++;
+    }
+  }
+  setInterval(drawMatrix, 33);
+
+  // 🔒 LOGIC SOI CẦU ĐÃ MÃ HOÁ
+  (function(){
+    function _0x1d7b(_0x43cb7e){return _0x43cb7e.split(/\s+/).map(function(_0x5c4fc3){return parseInt(_0x5c4fc3.trim());}).filter(function(_0x4b2aa9){return!isNaN(_0x4b2aa9);});}
+    function _0x9b8f(_0x5cb6d1){if(_0x5cb6d1.length!==4)return null;let _0x2073e6=0;for(let _0x3a30a3=0;_0x3a30a3<3;_0x3a30a3++){_0x2073e6+=Math.abs(_0x5cb6d1[_0x3a30a3]-_0x5cb6d1[_0x3a30a3+1]);}return _0x2073e6;}
+    function _0x2763(_0x3cf663){if(_0x3cf663<3||_0x3cf663>18)return "Cầu rất xấu, nên nghỉ tay!";return _0x3cf663<=10?"Xỉu":"Tài";}
+    window["duDoan"]=function(){
+      const _0x11f62c=_0x1d7b(document.getElementById("nohuInput").value),
+            _0x1c9f27=_0x1d7b(document.getElementById("md5Input").value),
+            _0x361a17=_0x9b8f(_0x11f62c),
+            _0x44d9aa=_0x9b8f(_0x1c9f27);
+      if(_0x361a17===null||_0x44d9aa===null){
+        document.getElementById("output").innerHTML="⚠️ Dữ liệu không hợp lệ! Vui lòng nhập đúng 4 số.";return;
+      }
+      let _0x21baf6=_0x2763(_0x361a17),
+          _0x15cc9f=_0x2763(_0x44d9aa),
+          _0x41938d=_0x15cc9f==="Tài"?"Xỉu":(_0x15cc9f==="Xỉu"?"Tài":_0x15cc9f),
+          _0x4c2f43=_0x21baf6;
+      document.getElementById("output").innerHTML='<strong>📌 Dự đoán từ Hit Nổ Hũ:</strong> <span style="color: yellow">'+_0x4c2f43+'</span><br><strong>📌 Dự đoán từ Hit MD5:</strong> <span style="color: cyan">'+_0x41938d+'</span>';
+    };
+  })();
+
+  // 🔒 CHỐNG F12 + DEVTOOLS + CHUỘT PHẢI
+  document.addEventListener('keydown', function(e) {
+    if (
+      e.key === 'F12' ||
+      (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key)) ||
+      (e.ctrlKey && e.key === 'U')
+    ) {
+      e.preventDefault();
+      alert("Tính năng bị khoá!");
+    }
+  });
+  document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+  });
+</script>
+</body>
+</html>
