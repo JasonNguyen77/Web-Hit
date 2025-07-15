@@ -1,156 +1,213 @@
+
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tool Dự Đoán HitClub</title>
+  <meta charset="UTF-8" />
+  <title>Dự Đoán Sunwin Jason Nguyên</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
+      background: #0c1a2a;
+      font-family: Arial, sans-serif;
+      color: white;
       margin: 0;
-      background: black;
-      color: #00ff00;
-      font-family: monospace;
-      overflow: hidden;
+      padding: 20px;
     }
-    canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: -1;
-    }
-    .container {
-      max-width: 700px;
+
+    .wrapper {
+      max-width: 400px;
       margin: auto;
-      padding: 30px;
+      background: #001a33;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px #00ff00;
     }
-    h1 {
+
+    h2 {
       text-align: center;
-      font-size: 32px;
-      text-shadow: 0 0 10px #00ff00;
-      margin-bottom: 40px;
+      color: #00ccff;
+      margin-bottom: 10px;
     }
-    .box {
-      background: rgba(0, 0, 0, 0.8);
-      border: 2px solid #00ff00;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 30px;
-      box-shadow: 0 0 10px #00ff00;
+
+    .circle {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 3px solid #00aaff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 22px;
+      font-weight: bold;
+      margin: 15px auto;
+      background-color: black;
     }
-    label {
-      display: block;
-      margin-top: 15px;
+
+    .status {
+      text-align: center;
+      color: #66ccff;
+      font-size: 14px;
     }
-    input[type=text] {
+
+    .time {
+      text-align: center;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    table {
       width: 100%;
-      padding: 10px;
-      background: black;
-      color: #00ff00;
-      border: 1px solid #00ff00;
-      margin-top: 5px;
-      border-radius: 5px;
+      font-size: 13px;
+      border-collapse: collapse;
+      margin-top: 10px;
     }
-    button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 20px;
-      background: #000;
-      color: #00ff00;
-      border: 2px solid #00ff00;
-      font-size: 18px;
-      border-radius: 5px;
-      cursor: pointer;
+
+    th, td {
+      padding: 6px;
+      text-align: center;
+      border-bottom: 1px solid #003366;
     }
-    .result {
-      margin-top: 25px;
-      padding: 20px;
-      background: #111;
-      border: 2px solid #00ff00;
-      border-radius: 10px;
-      font-size: 18px;
+
+    th {
+      background: #003f66;
+    }
+
+    .tai {
+      background: #00ff00;
+      color: #000;
+      border-radius: 6px;
+      padding: 2px 6px;
+      font-weight: bold;
+    }
+
+    .xiu {
+      background: #ff3333;
+      color: #fff;
+      border-radius: 6px;
+      padding: 2px 6px;
+      font-weight: bold;
+    }
+
+    .win {
+      color: #00ff00;
+      font-weight: bold;
+    }
+
+    .lose {
+      color: #ff3333;
+      font-weight: bold;
+    }
+
+    .pending {
+      color: #ccc;
+      font-style: italic;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #003366;
+      margin: 15px 0;
+    }
+
+    .title {
+      font-weight: bold;
+      margin: 5px 0;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-<canvas id="matrix"></canvas>
-<div class="container">
-  <h1>💻 Dự Đoán Cầu HitClub 💻</h1>
-  <div class="box">
-    <label>4 phiên trước Hit Nổ Hũ:</label>
-    <input type="text" id="nohuInput" placeholder="VD: 11 10 9 8">
-    <label>4 phiên trước Hit MD5:</label>
-    <input type="text" id="md5Input" placeholder="VD: 11 10 9 8">
-    <button onclick="duDoan()">🔮 Dự đoán kết quả</button>
+  <div class="wrapper">
+    <h2>DỰ ĐOÁN SUNWIN</h2>
+    <div id="phienText" class="status">#------</div>
+    <div class="circle" id="prediction">--</div>
+    <div class="status" id="status">ĐANG KẾT NỐI...</div>
+    <div class="time" id="clock">--:--:--</div>
+
+    <hr />
+    <div class="title">Lịch sử kết quả:</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Phiên</th>
+          <th>Dự đoán</th>
+          <th>Kết quả</th>
+          <th>Đánh giá</th>
+          <th>Thời gian</th>
+        </tr>
+      </thead>
+      <tbody id="history">
+        <!-- Kết quả sẽ thêm ở đây -->
+      </tbody>
+    </table>
   </div>
-  <div class="result" id="output"></div>
-</div>
 
-<script>
-  // MATRIX RAIN EFFECT
-  const canvas = document.getElementById('matrix');
-  const ctx = canvas.getContext('2d');
-  canvas.height = window.innerHeight;
-  canvas.width = window.innerWidth;
+  <script>
+    const apiURL = "https://dudoanteat-production.up.railway.app/prediction";
+    let historyData = [];
 
-  const letters = "アァイィウエカキクケコサシスセソタチツテトナニハヒフヘホマミムメモヤユヨラリルレロワンabcdefghijklmnopqrstuvwxyz0123456789";
-  const matrix = letters.split("");
-  const font_size = 14;
-  const columns = canvas.width / font_size;
-  const drops = [];
-
-  for (let x = 0; x < columns; x++) drops[x] = 1;
-
-  function drawMatrix() {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#0F0";
-    ctx.font = font_size + "px monospace";
-    for (let i = 0; i < drops.length; i++) {
-      const text = matrix[Math.floor(Math.random() * matrix.length)];
-      ctx.fillText(text, i * font_size, drops[i] * font_size);
-      if (drops[i] * font_size > canvas.height && Math.random() > 0.975) {
-        drops[i] = 0;
-      }
-      drops[i]++;
+    function formatTime() {
+      const now = new Date();
+      return now.toLocaleTimeString('vi-VN');
     }
-  }
-  setInterval(drawMatrix, 33);
 
-  // 🔒 LOGIC SOI CẦU ĐÃ MÃ HOÁ
-  (function(){
-    function _0x1d7b(_0x43cb7e){return _0x43cb7e.split(/\s+/).map(function(_0x5c4fc3){return parseInt(_0x5c4fc3.trim());}).filter(function(_0x4b2aa9){return!isNaN(_0x4b2aa9);});}
-    function _0x9b8f(_0x5cb6d1){if(_0x5cb6d1.length!==4)return null;let _0x2073e6=0;for(let _0x3a30a3=0;_0x3a30a3<3;_0x3a30a3++){_0x2073e6+=Math.abs(_0x5cb6d1[_0x3a30a3]-_0x5cb6d1[_0x3a30a3+1]);}return _0x2073e6;}
-    function _0x2763(_0x3cf663){if(_0x3cf663<3||_0x3cf663>18)return "Cầu rất xấu, nên nghỉ tay!";return _0x3cf663<=10?"Xỉu":"Tài";}
-    window["duDoan"]=function(){
-      const _0x11f62c=_0x1d7b(document.getElementById("nohuInput").value),
-            _0x1c9f27=_0x1d7b(document.getElementById("md5Input").value),
-            _0x361a17=_0x9b8f(_0x11f62c),
-            _0x44d9aa=_0x9b8f(_0x1c9f27);
-      if(_0x361a17===null||_0x44d9aa===null){
-        document.getElementById("output").innerHTML="⚠️ Dữ liệu không hợp lệ! Vui lòng nhập đúng 4 số.";return;
+    function addRow(phien, prediction, result, time) {
+      const row = document.createElement('tr');
+      let danhGia = '';
+      let cls = '';
+
+      if (prediction === 'Chưa dự đoán' || !prediction) {
+        prediction = '<span class="pending">Chưa dự đoán</span>';
+        danhGia = '<span class="pending">Chưa dự đoán</span>';
+        result = result === 'Tài' ? `<span class="tai">${result}</span>` : `<span class="xiu">${result}</span>`;
+      } else {
+        const isWin = prediction === result;
+        danhGia = isWin ? '<span class="win">✔ Thắng</span>' : '<span class="lose">✘ Thua</span>';
+        prediction = prediction === 'Tài' ? `<span class="tai">${prediction}</span>` : `<span class="xiu">${prediction}</span>`;
+        result = result === 'Tài' ? `<span class="tai">${result}</span>` : `<span class="xiu">${result}</span>`;
       }
-      let _0x21baf6=_0x2763(_0x361a17),
-          _0x15cc9f=_0x2763(_0x44d9aa),
-          _0x41938d=_0x15cc9f==="Tài"?"Xỉu":(_0x15cc9f==="Xỉu"?"Tài":_0x15cc9f),
-          _0x4c2f43=_0x21baf6;
-      document.getElementById("output").innerHTML='<strong>📌 Dự đoán từ Hit Nổ Hũ:</strong> <span style="color: yellow">'+_0x4c2f43+'</span><br><strong>📌 Dự đoán từ Hit MD5:</strong> <span style="color: cyan">'+_0x41938d+'</span>';
-    };
-  })();
 
-  // 🔒 CHỐNG F12 + DEVTOOLS + CHUỘT PHẢI
-  document.addEventListener('keydown', function(e) {
-    if (
-      e.key === 'F12' ||
-      (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key)) ||
-      (e.ctrlKey && e.key === 'U')
-    ) {
-      e.preventDefault();
-      alert("Tính năng bị khoá!");
+      row.innerHTML = `
+        <td>${phien}</td>
+        <td>${prediction}</td>
+        <td>${result}</td>
+        <td>${danhGia}</td>
+        <td>${time}</td>
+      `;
+
+      const table = document.getElementById("history");
+      table.prepend(row);
+      if (table.rows.length > 10) table.deleteRow(10);
     }
-  });
-  document.addEventListener('contextmenu', function(e) {
-    e.preventDefault();
-  });
-</script>
+
+    async function fetchData() {
+      try {
+        const res = await fetch(apiURL);
+        const data = await res.json();
+
+        // Hiện thông tin phiên hiện tại
+        document.getElementById("phienText").innerText = "#" + data.Phien;
+        document.getElementById("clock").innerText = formatTime();
+        document.getElementById("status").innerText = "ĐÃ KẾT NỐI";
+
+        const pred = data.Prediction;
+        document.getElementById("prediction").innerText = pred || "--";
+
+        const last = data.lastResult;
+        if (!historyData.includes(last.phien)) {
+          historyData.push(last.phien);
+          const predText = data.lastResult.phien === data.Phien - 1 ? data.Prediction : "Chưa dự đoán";
+          addRow(last.phien, predText, last.result, formatTime());
+        }
+
+      } catch (e) {
+        document.getElementById("status").innerText = "LỖI KẾT NỐI API";
+      }
+    }
+
+    setInterval(fetchData, 1000);
+    fetchData();
+  </script>
 </body>
 </html>
