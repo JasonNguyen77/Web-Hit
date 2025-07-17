@@ -1,213 +1,219 @@
-
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <title>Dự Đoán Sunwin Jason Nguyên</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tool Tài Xỉu - Hacker By Jason Nguyên</title>
   <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background: #0c1a2a;
-      font-family: Arial, sans-serif;
-      color: white;
-      margin: 0;
-      padding: 20px;
-    }
-
-    .wrapper {
-      max-width: 400px;
-      margin: auto;
-      background: #001a33;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 0 20px #00ff00;
-    }
-
-    h2 {
-      text-align: center;
-      color: #00ccff;
-      margin-bottom: 10px;
-    }
-
-    .circle {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      border: 3px solid #00aaff;
+      font-family: 'Courier New', monospace;
+      background: black;
+      color: #00ff00;
+      height: 100vh;
+      overflow: hidden;
       display: flex;
       justify-content: center;
       align-items: center;
+    }
+
+    #matrix {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      z-index: -1;
+      background: black;
+    }
+
+    .container {
+      background-color: rgba(0, 0, 0, 0.85);
+      padding: 30px; border-radius: 12px;
+      border: 1px solid #00ff00;
+      box-shadow: 0 0 20px #00ff00;
+      width: 100%; max-width: 420px;
+      text-align: center;
+      animation: fadeIn 1s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    h2 {
+      color: #00ff00;
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px #00ff00;
+    }
+
+    p {
+      color: #0aff0a;
+      font-size: 14px;
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+
+    input {
+      width: 90%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #00ff00;
+      border-radius: 8px;
+      background: black;
+      color: #00ff00;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 12px 20px;
+      background: #00ff00;
+      color: black;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #0f0;
+    }
+
+    #result {
+      margin-top: 15px;
       font-size: 22px;
       font-weight: bold;
-      margin: 15px auto;
-      background-color: black;
     }
 
-    .status {
-      text-align: center;
-      color: #66ccff;
-      font-size: 14px;
-    }
-
-    .time {
-      text-align: center;
-      font-size: 16px;
-      margin-bottom: 10px;
-    }
-
-    table {
-      width: 100%;
-      font-size: 13px;
-      border-collapse: collapse;
+    #percentage {
       margin-top: 10px;
-    }
-
-    th, td {
-      padding: 6px;
-      text-align: center;
-      border-bottom: 1px solid #003366;
-    }
-
-    th {
-      background: #003f66;
-    }
-
-    .tai {
-      background: #00ff00;
-      color: #000;
-      border-radius: 6px;
-      padding: 2px 6px;
-      font-weight: bold;
-    }
-
-    .xiu {
-      background: #ff3333;
-      color: #fff;
-      border-radius: 6px;
-      padding: 2px 6px;
-      font-weight: bold;
-    }
-
-    .win {
-      color: #00ff00;
-      font-weight: bold;
-    }
-
-    .lose {
-      color: #ff3333;
-      font-weight: bold;
-    }
-
-    .pending {
-      color: #ccc;
       font-style: italic;
     }
 
-    hr {
-      border: none;
-      border-top: 1px solid #003366;
-      margin: 15px 0;
+    .tai { color: #00ffff; }
+    .xiu { color: #ff00aa; }
+    .error { color: red; }
+
+    .bar-container {
+      margin-top: 10px;
+      display: flex;
+      height: 20px;
+      background: #111;
+      border-radius: 10px;
+      overflow: hidden;
     }
 
-    .title {
-      font-weight: bold;
-      margin: 5px 0;
+    .bar {
+      height: 100%;
       text-align: center;
+      line-height: 20px;
+      font-size: 14px;
+      font-weight: bold;
     }
+
+    .bar-tai { background: #00ffff; }
+    .bar-xiu { background: #ff00aa; }
+
   </style>
 </head>
 <body>
-  <div class="wrapper">
-    <h2>DỰ ĐOÁN SUNWIN</h2>
-    <div id="phienText" class="status">#------</div>
-    <div class="circle" id="prediction">--</div>
-    <div class="status" id="status">ĐANG KẾT NỐI...</div>
-    <div class="time" id="clock">--:--:--</div>
+<canvas id="matrix"></canvas>
 
-    <hr />
-    <div class="title">Lịch sử kết quả:</div>
-    <table>
-      <thead>
-        <tr>
-          <th>Phiên</th>
-          <th>Dự đoán</th>
-          <th>Kết quả</th>
-          <th>Đánh giá</th>
-          <th>Thời gian</th>
-        </tr>
-      </thead>
-      <tbody id="history">
-        <!-- Kết quả sẽ thêm ở đây -->
-      </tbody>
-    </table>
+<div id="toolBox" class="container">
+  <h2>TOOL TÀI XỈU MD5</h2>
+  <p>By Admin: <strong>Jason Nguyên</strong><br>Chúc bạn may mắn với công cụ soi cầu siêu chuẩn!</p>
+  <input id="md5" type="text" placeholder="Nhập mã MD5" />
+  <button id="btn">Xác định</button>
+  <div id="result"></div>
+  <div id="percentage"></div>
+  <div class="bar-container">
+    <div id="barTai" class="bar bar-tai" style="width: 50%">50%</div>
+    <div id="barXiu" class="bar bar-xiu" style="width: 50%">50%</div>
   </div>
+</div>
 
-  <script>
-    const apiURL = "https://dudoanteat-production.up.railway.app/prediction";
-    let historyData = [];
+<script>
+  // Matrix chữ chạy nền
+  const canvas = document.getElementById("matrix");
+  const ctx = canvas.getContext("2d");
 
-    function formatTime() {
-      const now = new Date();
-      return now.toLocaleTimeString('vi-VN');
-    }
+  canvas.height = window.innerHeight;
+  canvas.width = window.innerWidth;
 
-    function addRow(phien, prediction, result, time) {
-      const row = document.createElement('tr');
-      let danhGia = '';
-      let cls = '';
+  const chars = "01".split("");
+  const fontSize = 14;
+  const columns = canvas.width / fontSize;
+  const drops = Array(Math.floor(columns)).fill(1);
 
-      if (prediction === 'Chưa dự đoán' || !prediction) {
-        prediction = '<span class="pending">Chưa dự đoán</span>';
-        danhGia = '<span class="pending">Chưa dự đoán</span>';
-        result = result === 'Tài' ? `<span class="tai">${result}</span>` : `<span class="xiu">${result}</span>`;
-      } else {
-        const isWin = prediction === result;
-        danhGia = isWin ? '<span class="win">✔ Thắng</span>' : '<span class="lose">✘ Thua</span>';
-        prediction = prediction === 'Tài' ? `<span class="tai">${prediction}</span>` : `<span class="xiu">${prediction}</span>`;
-        result = result === 'Tài' ? `<span class="tai">${result}</span>` : `<span class="xiu">${result}</span>`;
+  function draw() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "#00ff00";
+    ctx.font = fontSize + "px monospace";
+
+    for (let i = 0; i < drops.length; i++) {
+      const text = chars[Math.floor(Math.random() * chars.length)];
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
       }
 
-      row.innerHTML = `
-        <td>${phien}</td>
-        <td>${prediction}</td>
-        <td>${result}</td>
-        <td>${danhGia}</td>
-        <td>${time}</td>
+      drops[i]++;
+    }
+  }
+
+  setInterval(draw, 33);
+
+  // Logic soi cầu MD5
+  document.getElementById('btn').addEventListener('click', () => {
+    const md5 = document.getElementById('md5').value.trim().toLowerCase();
+    const resultDiv = document.getElementById('result');
+    const percentageDiv = document.getElementById('percentage');
+    const barTai = document.getElementById('barTai');
+    const barXiu = document.getElementById('barXiu');
+    const regex = /^[a-f0-9]{32}$/;
+    resultDiv.className = '';
+    resultDiv.innerText = '';
+    percentageDiv.innerText = '';
+    if (!md5) {
+      resultDiv.innerText = 'Vui lòng nhập mã MD5';
+      resultDiv.classList.add('error');
+    } else if (!regex.test(md5)) {
+      resultDiv.innerText = 'Mã MD5 không hợp lệ';
+      resultDiv.classList.add('error');
+    } else {
+      const result = getResult(md5);
+      resultDiv.innerText = `Dự đoán kết quả: ${result.text}`;
+      resultDiv.classList.add(result.class);
+      percentageDiv.innerHTML = `
+        Tài: <span style="color:#00ffff">${result.taiPercent}%</span><br>
+        Xỉu: <span style="color:#ff00aa">${result.xiuPercent}%</span>
       `;
-
-      const table = document.getElementById("history");
-      table.prepend(row);
-      if (table.rows.length > 10) table.deleteRow(10);
+      barTai.style.width = result.taiPercent + '%';
+      barTai.innerText = result.taiPercent + '%';
+      barXiu.style.width = result.xiuPercent + '%';
+      barXiu.innerText = result.xiuPercent + '%';
     }
+  });
 
-    async function fetchData() {
-      try {
-        const res = await fetch(apiURL);
-        const data = await res.json();
-
-        // Hiện thông tin phiên hiện tại
-        document.getElementById("phienText").innerText = "#" + data.Phien;
-        document.getElementById("clock").innerText = formatTime();
-        document.getElementById("status").innerText = "ĐÃ KẾT NỐI";
-
-        const pred = data.Prediction;
-        document.getElementById("prediction").innerText = pred || "--";
-
-        const last = data.lastResult;
-        if (!historyData.includes(last.phien)) {
-          historyData.push(last.phien);
-          const predText = data.lastResult.phien === data.Phien - 1 ? data.Prediction : "Chưa dự đoán";
-          addRow(last.phien, predText, last.result, formatTime());
-        }
-
-      } catch (e) {
-        document.getElementById("status").innerText = "LỖI KẾT NỐI API";
-      }
+  function getResult(md5) {
+    const sub = md5.substring(0, 12);
+    let total = 0;
+    for (let i = 0; i < sub.length; i++) {
+      total += sub.charCodeAt(i);
     }
-
-    setInterval(fetchData, 1000);
-    fetchData();
-  </script>
+    const value = total % 100;
+    const tai = value;
+    const xiu = 100 - value;
+    return {
+      text: tai > xiu ? 'Tài' : 'Xỉu',
+      class: tai > xiu ? 'tai' : 'xiu',
+      taiPercent: tai,
+      xiuPercent: xiu
+    };
+  }
+</script>
 </body>
 </html>
